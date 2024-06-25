@@ -1,0 +1,7 @@
+[Unit]
+Description=Process NFS-Ganesha configuration
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=//usr/lib/ganesha/nfs-ganesha-config.sh
