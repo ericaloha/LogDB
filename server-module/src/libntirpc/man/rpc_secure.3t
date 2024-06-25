@@ -1,0 +1,186 @@
+.\" @(#)rpc_secure.3n	2.1 88/08/08 4.0 RPCSRC; from 1.19 88/06/24 SMI
+.\" $FreeBSD: src/lib/libc/rpc/rpc_secure.3,v 1.14 2002/12/19 09:40:23 ru Exp $
+.\"
+.Dd February 16, 1988
+.Dt RPC 3
+.Os
+.Sh NAME
+.Nm rpc_secure
+.Nd library routines for secure remote procedure calls
+.Sh SYNOPSIS
+.In rpc/rpc.h
+.Ft int
+.Fn getnetname "char *name"
+.Ft int
+.Fn host2netname "char *name" "const char *host" "const char *domain"
+.Ft int
+.Fn key_decryptsession "const char *remotename" "des_block *deskey"
+.Ft int
+.Fn key_encryptsession "const char *remotename" "des_block *deskey"
+.Ft int
+.Fn key_gendes "des_block *deskey"
+.Ft int
+.Fn key_setsecret "const char *key"
+.Ft int
+.Fn netname2host "char *name" "char *host" "int hostlen"
+.Ft int
+.Fn netname2user "char *name" "uid_t *uidp" "gid_t *gidp" "int *gidlenp" "gid_t *gidlist"
+.Ft int
+.Fn user2netname "char *name" "const uid_t uid" "const char *domain"
+.Sh DESCRIPTION
+These routines are part of the
+.Tn RPC
+library.  They implement
+.Tn DES
+Authentication.  See
+.Xr rpc 3
+for further details about
+.Tn RPC .
+.Pp
+.Pp
+The
+.Fn getnetname
+function
+installs the unique, operating-system independent netname of
+the
+caller in the fixed-length array
+.Fa name .
+Returns
+.Dv TRUE
+if it succeeds and
+.Dv FALSE
+if it fails.
+.Pp
+The
+.Fn host2netname
+function
+converts from a domain-specific hostname to an
+operating-system independent netname.
+Returns
+.Dv TRUE
+if it succeeds and
+.Dv FALSE
+if it fails.
+Inverse of
+.Fn netname2host .
+.Pp
+The
+.Fn key_decryptsession
+function
+is an interface to the keyserver daemon, which is associated
+with
+.Tn RPC Ns 's
+secure authentication system
+.Tn ( DES
+authentication).
+User programs rarely need to call it, or its associated routines
+.Fn key_encryptsession ,
+.Fn key_gendes
+and
+.Fn key_setsecret .
+System commands such as
+.Xr login 1
+and the
+.Tn RPC
+library are the main clients of these four routines.
+.Pp
+The
+.Fn key_decryptsession
+function
+takes a server netname and a
+.Tn DES
+key, and decrypts the key by
+using the public key of the server and the secret key
+associated with the effective uid of the calling process.  It
+is the inverse of
+.Fn key_encryptsession .
+.Pp
+The
+.Fn key_encryptsession
+function
+is a keyserver interface routine.
+It
+takes a server netname and a des key, and encrypts
+it using the public key of the server and the secret key
+associated with the effective uid of the calling process.  It
+is the inverse of
+.Fn key_decryptsession .
+.Pp
+The
+.Fn key_gendes
+function
+is a keyserver interface routine.
+It
+is used to ask the keyserver for a secure conversation key.
+Choosing one
+.Qq random
+is usually not good enough,
+because
+the common ways of choosing random numbers, such as using the
+current time, are very easy to guess.
+.Pp
+The
+.Fn key_setsecret
+function
+is a keyserver interface routine.
+It is used to set the key for
+the effective
+.Fa uid
+of the calling process.
+.Pp
+The
+.Fn netname2host
+function
+converts from an operating-system independent netname to a
+domain-specific hostname.
+Returns
+.Dv TRUE
+if it succeeds and
+.Dv FALSE
+if it fails.  Inverse of
+.Fn host2netname .
+.Pp
+The
+.Fn netname2user
+function
+converts from an operating-system independent netname to a
+domain-specific user ID.
+Returns
+.Dv TRUE
+if it succeeds and
+.Dv FALSE
+if it fails.
+Inverse of
+.Fn user2netname .
+.Pp
+The
+.Fn user2netname
+function
+converts from a domain-specific username to an operating-system
+independent netname.
+Returns
+.Dv TRUE
+if it succeeds and
+.Dv FALSE
+if it fails.
+Inverse of
+.Fn netname2user .
+.Sh SEE ALSO
+.Xr rpc 3 ,
+.Xr xdr 3 ,
+.Xr keyserv 8
+.Pp
+The following manuals:
+.Rs
+.%B Remote Procedure Calls: Protocol Specification
+.Re
+.Rs
+.%B Remote Procedure Call Programming Guide
+.Re
+.Rs
+.%B Rpcgen Programming Guide
+.Re
+.Rs
+.%B RPC: Remote Procedure Call Protocol Specification
+.%O RFC1050, Sun Microsystems Inc., USC-ISI
+.Re

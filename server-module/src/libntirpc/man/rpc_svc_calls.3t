@@ -1,0 +1,69 @@
+.\" @(#)rpc_svc_calls.3n 1.28 93/05/10 SMI; from SVr4
+.\" Copyright 1989 AT&T
+.\" @(#)rpc_svc_calls 1.5 89/07/25 SMI;
+.\" Copyright (c) 1988 Sun Microsystems, Inc. - All Rights Reserved.
+.\"	$NetBSD: rpc_svc_calls.3,v 1.1 2000/06/02 23:11:13 fvdl Exp $
+.\"	$FreeBSD: src/lib/libc/rpc/rpc_svc_calls.3,v 1.8 2003/09/08 19:57:15 ru Exp $
+.Dd May 3, 1993
+.Dt RPC_SVC_CALLS 3
+.Os
+.Sh NAME
+.Nm svc_getrpccaller ,
+.Nm svc_sendreply
+.Nd library routines for RPC servers
+.Sh LIBRARY
+.Lb libc
+.Sh SYNOPSIS
+.In rpc/rpc.h
+.Ft "struct netbuf *"
+.Fn svc_getrpccaller "const SVCXPRT *xprt"
+.Ft enum xprt_stat
+.Fn svc_sendreply "struct svc_req *request"
+.Sh DESCRIPTION
+These routines are part of the
+RPC
+library which allows C language programs to make procedure
+calls on other machines across the network.
+.Pp
+These routines are associated with the server side of the
+RPC mechanism.
+Some of them are called by the server side dispatch function,
+while others
+are called when the server is initiated.
+.Sh Routines
+See
+.Xr rpc 3
+for the definition of the
+.Vt SVCXPRT
+data structure.
+.Bl -tag -width svc_sendreply()
+.It Fn svc_sendreply
+Called by an RPC service's dispatch routine to send the results of a
+remote procedure call.
+The
+.Fa request
+argument
+is the request.
+Its
+.Tn struct rpc_msg
+.Fa ar_results
+fields must be set:
+.Fa proc
+is the
+.Tn XDR
+routine which is used to encode the results; and
+.Fa where
+is the address of the results.
+This routine returns
+.Dv XPRT_IDLE (0)
+for success,
+.Dv XPRT_DIED
+or greater otherwise.
+.El
+.Sh SEE ALSO
+.Xr poll 2 ,
+.Xr select 2 ,
+.Xr rpc 3 ,
+.Xr rpc_svc_create 3 ,
+.Xr rpc_svc_err 3 ,
+.Xr rpc_svc_reg 3
